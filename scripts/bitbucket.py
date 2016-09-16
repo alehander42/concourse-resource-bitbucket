@@ -91,7 +91,7 @@ if 'scripts.bitbucket' != __name__:
             ['git', '-C', artifact_dir, 'rev-parse', 'HEAD']
     ).strip()
 
-    commit_sha = commit_sha.decode('utf8')
+    commit_sha = commit_sha.decode('utf8')[:6]
     if debug:
         err("Commit: " + str(commit_sha))
 
@@ -113,26 +113,25 @@ if 'scripts.bitbucket' != __name__:
         org=org,
         repo=repo,
         commit_sha=commit_sha)
-
+    print(post_url)
     if debug:
         err(json_pp(j))
         err("Notifying %s that build %s is in status: %s" %
             (post_url, os.environ["BUILD_NAME"], build_status))
 
     build_url = "{url}/pipelines/{pipeline}/jobs/{jobname}/builds/{buildname}".format(
-            url=os.environ['ATC_EXTERNAL_URL'],
-            pipeline=os.environ['BUILD_PIPELINE_NAME'],
-            jobname=os.environ['BUILD_JOB_NAME'],
-            buildname=os.environ['BUILD_NAME'],
+            url=os.environ.get('ATC_EXTERNAL_URL', j['source']['atc_external']),
+            pipeline=os.environ.get('BUILD_PIPELINE_NAME', j['source']['pipeline']),
+            jobname=os.environ.get('BUILD_JOB_NAME', j['source']['job_name']),
+            buildname=os.environ.get('BUILD_NAME', j['source']['build_name']),
     )
-
     # https://developer.atlassian.com/bitbucket/server/docs/latest/how-tos/updating-build-status-for-commits.html
     js = {
         "state": build_status,
-        "key": os.environ["BUILD_JOB_NAME"],
-        "name": os.environ["BUILD_NAME"],
+        "key": os.environ.get("BUILD_JOB_NAME", j['source']['job_name']),
+        "name": os.environ.get("BUILD_NAME", j['source']['build_name']),
         "url": build_url,
-        "description": "Concourse build %s" % os.environ["BUILD_ID"]
+        "description": "Concourse build %s" % os.environ.get("BUILD_ID", '?')
     }
 
     if debug:
