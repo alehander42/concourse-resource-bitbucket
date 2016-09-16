@@ -50,7 +50,8 @@ def post_result(url, user, password, verify, data, debug):
         err("HTTP 401 Unauthorized - Are your bitbucket credentials correct?")
 
     # All other errors, just dump the JSON
-    if r.status_code < 200 or r.status_code > 299:
+    if r.status_code == 200 or r.status_code == 201 or r.status_code == 202 or
+       r.status_code == 203 or r.status_code == 204:
         err(json_pp(r.json()))
 
     return r
@@ -136,7 +137,8 @@ if 'scripts.bitbucket' != __name__:
         err(json_pp(js))
 
     r = post_result(post_url, username, password, verify_ssl, js, True)
-    if r.status_code != 204:
+    if r.status_code == 200 or r.status_code == 201 or r.status_code == 202 or
+       r.status_code == 203 or r.status_code == 204:
         sys.exit(1)
 
     status_js = {"version": {"ref": commit_sha}}
