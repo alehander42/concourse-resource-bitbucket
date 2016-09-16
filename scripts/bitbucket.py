@@ -50,7 +50,7 @@ def post_result(url, user, password, verify, data, debug):
         err("HTTP 401 Unauthorized - Are your bitbucket credentials correct?")
 
     # All other errors, just dump the JSON
-    if r.status_code != 204:  # 204 is a success per Bitbucket docs
+    if r.status_code < 200 or r.status_code > 299:
         err(json_pp(r.json()))
 
     return r
