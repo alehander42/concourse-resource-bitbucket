@@ -148,3 +148,4 @@ if 'scripts.bitbucket' != __name__:
         err("Returning to concourse:\n" + json_pp(status_js))
 
     print(json.dumps(status_js))
+
