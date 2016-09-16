@@ -16,12 +16,12 @@ def err(txt):
 # Convenience method for pretty-printing JSON
 def json_pp(json_object):
     if isinstance(json_object, dict):
-        json.dumps(json_object,
+        return json.dumps(json_object,
                    sort_keys=True,
                    indent=4,
                    separators=(',', ':')) + "\n"
     elif isinstance(json_object, str):
-        json.dumps(json.loads(json_object),
+        return json.dumps(json.loads(json_object),
                    sort_keys=True,
                    indent=4,
                    separators=(',', ':')) + "\n"
@@ -50,8 +50,8 @@ def post_result(url, user, password, verify, data, debug):
         err("HTTP 401 Unauthorized - Are your bitbucket credentials correct?")
 
     # All other errors, just dump the JSON
-    if r.status_code == 200 or r.status_code == 201 or r.status_code == 202 or\
-       r.status_code == 203 or r.status_code == 204:
+    if r.status_code != 200 and r.status_code != 201 and r.status_code != 202 and\
+       r.status_code != 203 and r.status_code != 204:
         err(json_pp(r.json()))
 
     return r
@@ -137,13 +137,13 @@ if 'scripts.bitbucket' != __name__:
         err(json_pp(js))
 
     r = post_result(post_url, username, password, verify_ssl, js, True)
-    if r.status_code == 200 or r.status_code == 201 or r.status_code == 202 or\
-       r.status_code == 203 or r.status_code == 204:
+    if r.status_code != 200 and r.status_code != 201 and r.status_code != 202 and\
+       r.status_code != 203 and r.status_code != 204:
         sys.exit(1)
 
     status_js = {"version": {"ref": commit_sha}}
 
-    if debug:
-        err("Returning to concourse:\n" + json_pp(status_js))
+    # if debug:
+    # err("Returning to concourse:\n" + json_pp(status_js))
 
-    print(json.dumps(status_js))
+    # print(json.dumps(status_js))
