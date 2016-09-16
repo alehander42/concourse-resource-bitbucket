@@ -113,7 +113,7 @@ if 'scripts.bitbucket' != __name__:
         org=org,
         repo=repo,
         commit_sha=commit_sha)
-    print(post_url)
+    
     if debug:
         err(json_pp(j))
         err("Notifying %s that build %s is in status: %s" %
