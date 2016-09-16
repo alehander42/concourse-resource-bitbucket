@@ -69,12 +69,14 @@ if 'scripts.bitbucket' != __name__:
     j = parse_stdin()
 
     # Configuration vars
-    url = j['source']['bitbucket_url'] + 'rest/build-status/1.0/commits/'
-    verify_ssl = j['source'].get('verify_ssl', True)
-    debug = j['source'].get('debug', False)
     username = j['source']['bitbucket_username']
     password = j['source']['bitbucket_password']
-
+    org = j['source']['bitbucket_org']
+    repo = j['source']['bitbucket_repo']
+    s = j['source']['bitbucket_url']
+    verify_ssl = j['source'].get('verify_ssl', True)
+    debug = j['source'].get('debug', False)
+    
     build_status = j['params']['build_status']
     artifact_dir = "%s/%s" % (sys.argv[1], j['params']['repo'])
 
@@ -103,8 +105,12 @@ if 'scripts.bitbucket' != __name__:
         if debug:
             err("SSL warnings disabled\n")
 
-    # Construct the URL and JSON objects
-    post_url = url + commit_sha
+    post_url = '{s}/2.0/repositories/{org}/{repo}/commit/{commit_sha}/statuses/build'.format(
+        s=s,
+        org=org,
+        repo=repo,
+        commit_sha=commit_sha)
+
     if debug:
         err(json_pp(j))
         err("Notifying %s that build %s is in status: %s" %
@@ -129,7 +135,7 @@ if 'scripts.bitbucket' != __name__:
     if debug:
         err(json_pp(js))
 
-    r = post_result(post_url, username, password, verify_ssl, js)
+    r = post_result(post_url, username, password, verify_ssl, js, True)
     if r.status_code != 204:
         sys.exit(1)
 
