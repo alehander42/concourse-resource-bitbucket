@@ -90,6 +90,7 @@ if 'scripts.bitbucket' != __name__:
             ['git', '-C', artifact_dir, 'rev-parse', 'HEAD']
     ).strip()
 
+    commit_sha = commit_sha.decode('utf8')
     if debug:
         err("Commit: " + str(commit_sha))
 
