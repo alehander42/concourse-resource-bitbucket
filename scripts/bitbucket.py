@@ -43,6 +43,7 @@ def post_result(url, user, password, verify, data, debug):
 
     if debug:
         err("Request result: " + str(r))
+        err(json_pp(r.json()))
 
     if r.status_code == 403:
         err("HTTP 403 Forbidden - Does your bitbucket user have rights to the repo?")
@@ -144,7 +145,7 @@ if 'scripts.bitbucket' != __name__:
 
     status_js = {"version": {"ref": commit_sha}}
 
-    # if debug:
-    # err("Returning to concourse:\n" + json_pp(status_js))
+    if debug:
+        err("Returning to concourse:\n" + json_pp(status_js))
 
-    # print(json.dumps(status_js))
+    print(json.dumps(status_js))
